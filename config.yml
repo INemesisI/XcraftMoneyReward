@@ -1,0 +1,75 @@
+Daily:
+  Options:
+    Active: true
+    Notify: true
+  Reward:
+    default: 50
+     
+Online:
+  Options:
+    Active: true
+    Notify: false
+    UseEssentialsAFK: true
+    Intervall: 15
+  Reward:
+    default: 5
+
+Mob:
+  Options:
+    Active: true
+    Notify: true
+    Camping:
+       Use: true
+       Cap: 5
+       Radius: 16
+       Reducement: 0.75
+    BlackList: 
+       Use: true
+       Deny: 
+         - SPAWNER
+         - CUSTOM
+       KillOnChunkUnload: false
+  Multiplier:
+    use: false
+    World:
+      world : 1.0
+    Group:
+      default: 1.0
+    Time:
+      Sunrise: 1.0
+      Day: 1.0
+      Sunset: 1.0
+      Night: 1.0
+  Reward:
+    BLAZE: 12.5
+    CAVE_SPIDER: 12.5
+    CREEPER: 10.0
+    CREEPER_POWERED: 100.0
+    ENDER_DRAGON: 500.0
+    ENDERMAN: 10.0
+    GHAST: 25.0
+    GIANT: 85.0
+    IRON_GOLEM: 0.0
+    MAGMA_CUBE: 25.0
+    PIG_ZOMBIE: 10.0
+    SILVERFISH: 2.0
+    SKELETON: 7.0
+    SLIME: 2.0
+    SPIDER: 5.0
+    WITCH: 100.0
+    WITHER: 500.0
+    ZOMBIE: 5.0
+    BAT: 2.0
+    CHICKEN: 0.0
+    COW: 0.0
+    MUSHROOM_COW: 0.0
+    OCELOT: 0.0
+    PIG: 0.0
+    SHEEP: 0.0
+    SQUID: 0.0
+    WOLF: 5.0
+    WOLF_TAMED: -150.0
+    WOLF_TAMED_SELF: 0.0
+    OVELOT_TAMED: -150.0
+    OVELOT_TAMED_SELF: 0.0
+      

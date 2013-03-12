@@ -1,0 +1,30 @@
+name: XcraftMoneyReward
+main: de.xcraft.inemesisi.moneyreward.MoneyReward
+version: 1.0
+author: INemesisI
+depend: [Vault]
+
+commands:
+  mr:
+    
+
+permissions:
+    XcraftMoneyReward.User:
+        description: Access  to all Rewards
+        children:
+            XcraftMoneyReward.Daily: true
+            XcraftMoneyReward.Online: true
+            XcraftMoneyReward.Mob: true
+        default: true
+
+    XcraftMoneyReward.Daily:
+        description: Reward for daily logins
+        
+    XcraftMoneyReward.Online:
+        description: Regular reward for playing on the server
+        
+    XcraftMoneyReward.Mob:
+        description: Reward for killing mobs
+        
+    XcraftMoneyReward.Mob.Camp.Exempt:
+        description: Exemption for the Camp-Limit
