@@ -12,27 +12,26 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
-
 public class ConfigManager {
 
-	private MoneyReward			plugin;
-	private FileConfiguration	config;
-	private boolean				dailyRewardActive				= true;
-	private boolean				onlineRewardActive				= true;
-	private boolean				mobRewardActive					= true;
-	private boolean				dailyRewardNotify				= true;
-	private boolean				onlineRewardNotify				= false;
-	private boolean				mobRewardNotify					= true;
-	private int					onlineRewardIntervall			= 0;
-	private boolean				useEssentials					= false;
-	private boolean				useCamping						= false;
-	private int					campingRadius					= 0;
-	private int					campingCap						= 0;
-	private double				campingReducement				= 1;
-	private boolean				useBacklist						= false;
-	private List<String>		blacklist						= new ArrayList<String>();
-	private boolean				removeBlacklistedOnChunkunload	= false;
-	private boolean				useMultiplier					= false;
+	private final MoneyReward plugin;
+	private FileConfiguration config;
+	private boolean dailyRewardActive = true;
+	private boolean onlineRewardActive = true;
+	private boolean mobRewardActive = true;
+	private boolean dailyRewardNotify = true;
+	private boolean onlineRewardNotify = false;
+	private boolean mobRewardNotify = true;
+	private int onlineRewardIntervall = 0;
+	private boolean useEssentials = false;
+	private boolean useCamping = false;
+	private int campingRadius = 0;
+	private int campingCap = 0;
+	private double campingReducement = 1;
+	private boolean useBacklist = false;
+	private List<String> blacklist = new ArrayList<String>();
+	private boolean removeBlacklistedOnChunkunload = false;
+	private boolean useMultiplier = false;
 
 	public ConfigManager(MoneyReward instance) {
 		plugin = instance;
@@ -70,9 +69,13 @@ public class ConfigManager {
 	public double getDailyReward(Player player) {
 		for (String group : config.getConfigurationSection("Daily.Reward").getKeys(false)) {
 			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
-				if (group.equals(pgroup)) { return config.getDouble("Daily.Reward." + group); }
+				if (group.equals(pgroup)) {
+					return config.getDouble("Daily.Reward." + group);
+				}
 			}
-			if (group.equals("default")) { return config.getDouble("Daily.Reward.default"); }
+			if (group.equals("default")) {
+				return config.getDouble("Daily.Reward.default");
+			}
 		}
 		return 0;
 	}
@@ -80,9 +83,13 @@ public class ConfigManager {
 	public double getOnlineReward(Player player) {
 		for (String group : config.getConfigurationSection("Online.Reward").getKeys(false)) {
 			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
-				if (group.equals(pgroup)) { return config.getDouble("Online.Reward." + group); }
+				if (group.equals(pgroup)) {
+					return config.getDouble("Online.Reward." + group);
+				}
 			}
-			if (group.equals("default")) { return config.getDouble("Online.Reward.default"); }
+			if (group.equals("default")) {
+				return config.getDouble("Online.Reward.default");
+			}
 		}
 		return 0;
 	}
@@ -121,7 +128,7 @@ public class ConfigManager {
 		if (config.contains("Mob.Multiplier.World." + player.getWorld().getName())) {
 			worldmp = config.getDouble("Mob.Multiplier.World." + player.getWorld().getName());
 		}
-		breakpoint: for (String group : config.getConfigurationSection("Mob.Multiplier.Group").getKeys(false)) {
+		breakpoint : for (String group : config.getConfigurationSection("Mob.Multiplier.Group").getKeys(false)) {
 			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
 				if (group.equals(pgroup)) {
 					groupmp = config.getDouble("Mob.Multiplier.Group." + group);

@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 
-
 public enum Msg {
 	REWARD_DAILY("&aYou recieved &6$Reward$&a for logging in today!"), //
 	REWARD_ONLINE("&aYou just recieved &6$Reward$&a for playing"), //
@@ -15,12 +14,12 @@ public enum Msg {
 	PENALTY_MOB("&cYou lost &6$Reward$&c for killing a &3$Mob$!"), //
 	ERR_CAMPING("&cYou dont recieve any rewards anymore, because you are camping!");
 
-	private String	msg;
+	private String msg;
 
 	public enum Key {
 		$Player$("$Player$"), $Reward$("$Reward$"), $Mob$("$Mob$");
 
-		private String	replace;
+		private String replace;
 
 		Key(String replace) {
 			this.setReplace(replace);
@@ -78,12 +77,16 @@ public enum Msg {
 
 	public static void init(MoneyReward plugin) {
 		File msgFile = new File(plugin.getDataFolder(), "locale.yml");
-		if (!load(msgFile)) { return; }
+		if (!load(msgFile)) {
+			return;
+		}
 		parseFile(msgFile);
 	}
 
 	private static boolean load(File file) {
-		if (file.exists()) { return true; }
+		if (file.exists()) {
+			return true;
+		}
 		try {
 			file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));

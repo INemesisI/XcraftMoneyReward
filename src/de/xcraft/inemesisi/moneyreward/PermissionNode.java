@@ -6,7 +6,7 @@ public enum PermissionNode {
 	MOB("XcraftMoneyReward.Mob"), //
 	; //
 
-	private String	node;
+	private String node;
 
 	PermissionNode(String node) {
 		this.node = node;

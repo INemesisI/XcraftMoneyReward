@@ -19,11 +19,10 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import de.xcraft.inemesisi.moneyreward.Msg.Key;
 
-
 public class EventListener implements Listener {
 
-	private MoneyReward	plugin	= null;
-	int					added	= 0, denied = 0, despawned = 0;
+	private MoneyReward plugin = null;
+	int added = 0, denied = 0, despawned = 0;
 
 	public EventListener(MoneyReward instance) {
 		plugin = instance;
@@ -32,7 +31,9 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		plugin.players.put(event.getPlayer(), new RewardPlayer(event.getPlayer()));
-		if (!event.getPlayer().hasPermission(PermissionNode.DAILY.get())) { return; }
+		if (!event.getPlayer().hasPermission(PermissionNode.DAILY.get())) {
+			return;
+		}
 		Calendar current = Calendar.getInstance();
 		current.setTime(new Date());
 		Calendar lastplayed = Calendar.getInstance();
@@ -40,8 +41,10 @@ public class EventListener implements Listener {
 		if (lastplayed.get(Calendar.DAY_OF_MONTH) < current.get(Calendar.DAY_OF_MONTH)) {
 			double reward = plugin.getCfg().getDailyReward(event.getPlayer());
 			if (plugin.reward(event.getPlayer().getName(), reward) && plugin.getCfg().isDailyRewardNotify()) {
-				Messenger.tellPlayer(event.getPlayer(), Msg.REWARD_DAILY.toString(Key.$Player$(event.getPlayer()
-						.getName()), Key.$Reward$(plugin.getEconomy().format(reward)), Key.$Mob$));
+				Messenger.tellPlayer(
+						event.getPlayer(),
+						Msg.REWARD_DAILY.toString(Key.$Player$(event.getPlayer().getName()),
+								Key.$Reward$(plugin.getEconomy().format(reward)), Key.$Mob$));
 			}
 		}
 	}
@@ -58,16 +61,22 @@ public class EventListener implements Listener {
 			denied++;
 			return;
 		}
-		if (!(event.getEntity().getKiller() instanceof Player)) { return; }
+		if (!(event.getEntity().getKiller() instanceof Player)) {
+			return;
+		}
 		Player player = event.getEntity().getKiller();
-		if (!player.hasPermission(PermissionNode.MOB.get())) { return; }
-		if ((event.getEntity().getType() == EntityType.SLIME) && (((Slime) event.getEntity()).getSize() != 4)) { return; }
+		if (!player.hasPermission(PermissionNode.MOB.get())) {
+			return;
+		}
+		if ((event.getEntity().getType() == EntityType.SLIME) && (((Slime) event.getEntity()).getSize() != 4)) {
+			return;
+		}
 		this.updateCamping(player);
 		double reward = plugin.getCfg().getMobReward(player, event.getEntity());
 		if (this.isCamping(player)) {
-//			if ((reward != 0) && plugin.getCfg().isMobRewardNotify()) {
-//				Messenger.tellPlayer(player, Msg.ERR_CAMPING.toString());
-//			}
+			// if ((reward != 0) && plugin.getCfg().isMobRewardNotify()) {
+			// Messenger.tellPlayer(player, Msg.ERR_CAMPING.toString());
+			// }
 		} else {
 			RewardPlayer rwp = plugin.players.get(player);
 			if (rwp.campkills > 0) {
@@ -75,11 +84,17 @@ public class EventListener implements Listener {
 			}
 			if (plugin.reward(player.getName(), reward) && plugin.getCfg().isMobRewardNotify()) {
 				if (reward > 0) {
-					Messenger.tellPlayer(player, Msg.REWARD_MOB.toString(Key.$Player$(player.getName()), Key
-							.$Reward$(plugin.getEconomy().format(reward)), Key.$Mob$(event.getEntityType().getName())));
+					Messenger.tellPlayer(
+							player,
+							Msg.REWARD_MOB.toString(Key.$Player$(player.getName()),
+									Key.$Reward$(plugin.getEconomy().format(reward)),
+									Key.$Mob$(event.getEntityType().getName())));
 				} else {
-					Messenger.tellPlayer(player, Msg.PENALTY_MOB.toString(Key.$Player$(player.getName()), Key
-							.$Reward$(plugin.getEconomy().format(reward)), Key.$Mob$(event.getEntityType().getName())));
+					Messenger.tellPlayer(
+							player,
+							Msg.PENALTY_MOB.toString(Key.$Player$(player.getName()),
+									Key.$Reward$(plugin.getEconomy().format(reward)),
+									Key.$Mob$(event.getEntityType().getName())));
 				}
 			}
 		}
@@ -91,7 +106,10 @@ public class EventListener implements Listener {
 		if (plugin.getCfg().isUseBlacklist() && plugin.getCfg().getBlacklist().contains(sr.toString())) {
 			Entity e = event.getEntity();
 			// Dont block Entitys that only spawn in mobspawners
-			if ((sr == SpawnReason.SPAWNER) && ((e.getType() == EntityType.BLAZE) || (e.getType() == EntityType.CAVE_SPIDER))) { return; }
+			if ((sr == SpawnReason.SPAWNER)
+					&& ((e.getType() == EntityType.BLAZE) || (e.getType() == EntityType.CAVE_SPIDER))) {
+				return;
+			}
 			plugin.blacklist.add(event.getEntity().getEntityId());
 			added++;
 		}
@@ -111,7 +129,9 @@ public class EventListener implements Listener {
 	}
 
 	public void updateCamping(Player pl) {
-		if (!plugin.getCfg().isUseCamping()) { return; }
+		if (!plugin.getCfg().isUseCamping()) {
+			return;
+		}
 		RewardPlayer rp = plugin.players.get(pl);
 		Location camp = rp.camp;
 		Location curr = pl.getLocation();

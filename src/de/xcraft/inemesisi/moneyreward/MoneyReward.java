@@ -25,16 +25,15 @@ import com.earth2me.essentials.User;
 
 import de.xcraft.inemesisi.moneyreward.Msg.Key;
 
-
 public class MoneyReward extends JavaPlugin {
 
-	private EventListener				eventlistener	= new EventListener(this);
-	private ConfigManager				cfg				= new ConfigManager(this);
-	private Economy						economy			= null;
-	private Permission					permission		= null;
-	private Essentials					essentials		= null;
-	public Map<Player, RewardPlayer>	players			= new HashMap<Player, RewardPlayer>();
-	public List<Integer>				blacklist		= new ArrayList<Integer>();
+	private final EventListener eventlistener = new EventListener(this);
+	private final ConfigManager cfg = new ConfigManager(this);
+	private Economy economy = null;
+	private Permission permission = null;
+	private Essentials essentials = null;
+	public Map<Player, RewardPlayer> players = new HashMap<Player, RewardPlayer>();
+	public List<Integer> blacklist = new ArrayList<Integer>();
 
 	@Override
 	public void onDisable() {
@@ -77,7 +76,9 @@ public class MoneyReward extends JavaPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
-		if (args.length == 0) { return true; }
+		if (args.length == 0) {
+			return true;
+		}
 		if (args[0].equals("reload") && sender.hasPermission("XcraftMoneyReward.Reload")) {
 			cfg.load();
 			sender.sendMessage(ChatColor.DARK_AQUA + "[" + this.getName() + "] " + ChatColor.GRAY + " config reloaded!");
@@ -92,8 +93,8 @@ public class MoneyReward extends JavaPlugin {
 	}
 
 	private boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> economyProvider = this.getServer().getServicesManager().getRegistration(
-				net.milkbowl.vault.economy.Economy.class);
+		RegisteredServiceProvider<Economy> economyProvider = this.getServer().getServicesManager()
+				.getRegistration(net.milkbowl.vault.economy.Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
 		}
@@ -130,7 +131,9 @@ public class MoneyReward extends JavaPlugin {
 
 	public void updateOnlineTime() {
 		for (Player player : players.keySet()) {
-			if (!player.hasPermission(PermissionNode.ONLINE.get())) { return; }
+			if (!player.hasPermission(PermissionNode.ONLINE.get())) {
+				return;
+			}
 			if (this.getCfg().isUseEssentials()) {
 				User user = essentials.getUser(player);
 				if ((user != null) && user.isAfk()) {
@@ -142,8 +145,10 @@ public class MoneyReward extends JavaPlugin {
 			if (rp.onlinetime == cfg.getOnlineRewardIntervall()) {
 				double reward = cfg.getOnlineReward(player);
 				if (this.reward(player.getName(), reward) && this.getCfg().isOnlineRewardNotify()) {
-					Messenger.tellPlayer(player, Msg.REWARD_DAILY.toString(Key.$Player$(player.getName()), Key
-							.$Reward$(this.getEconomy().format(reward)), Key.$Mob$));
+					Messenger.tellPlayer(
+							player,
+							Msg.REWARD_DAILY.toString(Key.$Player$(player.getName()),
+									Key.$Reward$(this.getEconomy().format(reward)), Key.$Mob$));
 				}
 			}
 		}
