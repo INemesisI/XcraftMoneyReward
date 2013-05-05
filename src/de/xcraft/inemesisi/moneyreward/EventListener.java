@@ -11,18 +11,18 @@ import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import de.xcraft.inemesisi.moneyreward.Msg.Key;
 
 public class EventListener implements Listener {
 
 	private MoneyReward plugin = null;
-	public int added = 0, denied = 0, despawned = 0;
+	public int denied = 0, despawned = 0;
 
 	public EventListener(MoneyReward instance) {
 		plugin = instance;
@@ -56,8 +56,8 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (plugin.getCfg().isUseBlacklist() && plugin.blacklist.contains(event.getEntity())) {
-			plugin.blacklist.remove(event.getEntity());
+		if (plugin.getCfg().isUseBlacklist()
+				&& plugin.getCfg().getBlacklist().contains(event.getEntity().getMetadata("SpawnReason"))) {
 			denied++;
 			return;
 		}
@@ -71,7 +71,7 @@ public class EventListener implements Listener {
 		if ((event.getEntity().getType() == EntityType.SLIME) && (((Slime) event.getEntity()).getSize() != 4)) {
 			return;
 		}
-		this.updateCamping(player);
+		this.updateCamping(player, event.getEntity());
 		double reward = plugin.getCfg().getMobReward(player, event.getEntity());
 		if (this.isCamping(player)) {
 			// if ((reward != 0) && plugin.getCfg().isMobRewardNotify()) {
@@ -101,19 +101,14 @@ public class EventListener implements Listener {
 	}
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
-		SpawnReason sr = event.getSpawnReason();
-		if (plugin.getCfg().isUseBlacklist() && plugin.getCfg().getBlacklist().contains(sr.toString())) {
-			plugin.blacklist.add(event.getEntity());
-			added++;
-		}
+		event.getEntity().setMetadata("SpawnReason", new FixedMetadataValue(plugin, event.getSpawnReason().toString()));
 	}
 
 	@EventHandler
 	public void onChunkUnload(ChunkUnloadEvent event) {
 		if (plugin.getCfg().isUseBlacklist() && plugin.getCfg().isremoveBlacklistedOnChunkunload()) {
 			for (Entity e : event.getChunk().getEntities()) {
-				if (plugin.blacklist.contains(e)) {
-					plugin.blacklist.remove(e);
+				if (plugin.getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
 					despawned++;
 					e.remove();
 				}
@@ -121,7 +116,7 @@ public class EventListener implements Listener {
 		}
 	}
 
-	public void updateCamping(Player player) {
+	public void updateCamping(Player player, Entity e) {
 		if (!plugin.getCfg().isUseCamping()) {
 			return;
 		}
@@ -136,7 +131,8 @@ public class EventListener implements Listener {
 			if (rp.campkills == plugin.getCfg().getCampingCap()) {
 				Messenger.tellPlayer(player, Msg.ERR_CAMPING.toString());
 			}
-			if (rp.campkills > plugin.getCfg().getPenaltyAfter()
+			if (e.getMetadata("SpawnReason").get(0).asString().equals("SPAWNER")
+					&& rp.campkills > plugin.getCfg().getPenaltyAfter()
 					&& rp.campkills % plugin.getCfg().getPenaltyStep() == 0) {
 				int penalty = plugin.getCfg().getPenaltyAmount();
 				plugin.reward(player.getName(), penalty);

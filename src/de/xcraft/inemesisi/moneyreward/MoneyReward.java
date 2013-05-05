@@ -1,10 +1,8 @@
 package de.xcraft.inemesisi.moneyreward;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.milkbowl.vault.economy.Economy;
@@ -33,21 +31,18 @@ public class MoneyReward extends JavaPlugin {
 	private Permission permission = null;
 	private Essentials essentials = null;
 	public Map<Player, RewardPlayer> players = new HashMap<Player, RewardPlayer>();
-	public List<Entity> blacklist = new ArrayList<Entity>();
 
 	@Override
 	public void onDisable() {
-		for (World world : this.getServer().getWorlds()) {
-			for (Entity e : world.getEntities()) {
-				if (blacklist.contains(e.getEntityId())) {
-					if (cfg.isremoveBlacklistedOnChunkunload()) {
+		if (cfg.isremoveBlacklistedOnChunkunload()) {
+			for (World world : this.getServer().getWorlds()) {
+				for (Entity e : world.getEntities()) {
+					if (getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
 						e.remove();
 					}
 				}
 			}
 		}
-		Messenger.info(blacklist.size() + " Mobs blacklisted");
-		Messenger.info(eventlistener.added + " Mobs added");
 		Messenger.info(eventlistener.denied + " Mobs denied");
 		Messenger.info(eventlistener.despawned + " Mobs despawned");
 		cfg.save();
@@ -84,8 +79,6 @@ public class MoneyReward extends JavaPlugin {
 			sender.sendMessage(ChatColor.DARK_AQUA + "[" + this.getName() + "] " + ChatColor.GRAY + " config reloaded!");
 		}
 		if (args[0].equals("info") && sender.hasPermission("XcraftMoneyReward.Mob")) {
-			sender.sendMessage(blacklist.size() + " Mobs blacklisted");
-			sender.sendMessage(eventlistener.added + " Mobs added");
 			sender.sendMessage(eventlistener.denied + " Mobs denied");
 			sender.sendMessage(eventlistener.despawned + " Mobs despawned");
 		}
@@ -125,7 +118,7 @@ public class MoneyReward extends JavaPlugin {
 			@Override
 			public void run() {
 				checkOnlineTime();
-				checkBlackList();
+				checkBlacklist();
 			}
 		}, sec * 20, 60 * 20); // every minute
 	}
@@ -155,12 +148,18 @@ public class MoneyReward extends JavaPlugin {
 		}
 	}
 
-	private void checkBlackList() {
-		for (Entity e : blacklist) {
-			if (e.getTicksLived() > this.getCfg().getRemoveBlacklistedAfterMins()) {
-				e.remove();
-			} else if (e.getNearbyEntities(1, 1, 1).size() > this.getCfg().getRemoveBlacklistedStacked()) {
-				e.remove();
+	private void checkBlacklist() {
+		if (cfg.isremoveBlacklistedOnChunkunload()) {
+			for (World world : this.getServer().getWorlds()) {
+				for (Entity e : world.getEntities()) {
+					if (getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
+						if (e.getTicksLived() > this.getCfg().getRemoveBlacklistedAfterMins()
+								|| e.getNearbyEntities(1, 1, 1).size() > this.getCfg().getRemoveBlacklistedStacked()) {
+							e.remove();
+							eventlistener.despawned++;
+						}
+					}
+				}
 			}
 		}
 	}
