@@ -22,7 +22,7 @@ import de.xcraft.inemesisi.moneyreward.Msg.Key;
 public class EventListener implements Listener {
 
 	private MoneyReward plugin = null;
-	int added = 0, denied = 0, despawned = 0;
+	public int added = 0, denied = 0, despawned = 0;
 
 	public EventListener(MoneyReward instance) {
 		plugin = instance;
@@ -56,8 +56,8 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (plugin.getCfg().isUseBlacklist() && plugin.blacklist.contains(event.getEntity().getEntityId())) {
-			plugin.blacklist.remove((Integer) event.getEntity().getEntityId());
+		if (plugin.getCfg().isUseBlacklist() && plugin.blacklist.contains(event.getEntity())) {
+			plugin.blacklist.remove(event.getEntity());
 			denied++;
 			return;
 		}
@@ -99,18 +99,11 @@ public class EventListener implements Listener {
 			}
 		}
 	}
-
 	@EventHandler
 	public void onEntitySpawn(CreatureSpawnEvent event) {
 		SpawnReason sr = event.getSpawnReason();
 		if (plugin.getCfg().isUseBlacklist() && plugin.getCfg().getBlacklist().contains(sr.toString())) {
-			Entity e = event.getEntity();
-			// Dont block Entitys that only spawn in mobspawners
-			if ((sr == SpawnReason.SPAWNER)
-					&& ((e.getType() == EntityType.BLAZE) || (e.getType() == EntityType.CAVE_SPIDER))) {
-				return;
-			}
-			plugin.blacklist.add(event.getEntity().getEntityId());
+			plugin.blacklist.add(event.getEntity());
 			added++;
 		}
 	}
@@ -119,8 +112,8 @@ public class EventListener implements Listener {
 	public void onChunkUnload(ChunkUnloadEvent event) {
 		if (plugin.getCfg().isUseBlacklist() && plugin.getCfg().isremoveBlacklistedOnChunkunload()) {
 			for (Entity e : event.getChunk().getEntities()) {
-				if (plugin.blacklist.contains(e.getEntityId())) {
-					plugin.blacklist.remove((Integer) e.getEntityId());
+				if (plugin.blacklist.contains(e)) {
+					plugin.blacklist.remove(e);
 					despawned++;
 					e.remove();
 				}
@@ -128,24 +121,35 @@ public class EventListener implements Listener {
 		}
 	}
 
-	public void updateCamping(Player pl) {
+	public void updateCamping(Player player) {
 		if (!plugin.getCfg().isUseCamping()) {
 			return;
 		}
-		RewardPlayer rp = plugin.players.get(pl);
+		RewardPlayer rp = plugin.players.get(player);
 		Location camp = rp.camp;
-		Location curr = pl.getLocation();
+		Location curr = player.getLocation();
 		int r = plugin.getCfg().getCampingRadius();
 		if ((((camp.getX() - r) <= curr.getX()) && ((camp.getX() + r) >= curr.getX())) //
 				&& (((camp.getY() - r) <= curr.getY()) && ((camp.getY() + r) >= curr.getY())) //
 				&& (((camp.getZ() - r) <= curr.getZ()) && ((camp.getZ() + r) >= curr.getZ()))) {
 			rp.campkills++;
+			if (rp.campkills == plugin.getCfg().getCampingCap()) {
+				Messenger.tellPlayer(player, Msg.ERR_CAMPING.toString());
+			}
+			if (rp.campkills > plugin.getCfg().getPenaltyAfter()
+					&& rp.campkills % plugin.getCfg().getPenaltyStep() == 0) {
+				int penalty = plugin.getCfg().getPenaltyAmount();
+				plugin.reward(player.getName(), penalty);
+				Messenger.tellPlayer(
+						player,
+						Msg.PENALTY_CAMP.toString(Key.$Player$(player.getName()),
+								Key.$Reward$(plugin.getEconomy().format(penalty)), Key.$Mob$("")));
+			}
 		} else {
 			rp.camp = curr;
 			rp.campkills = 1;
 		}
 	}
-
 	public boolean isCamping(Player player) {
 		if (!plugin.getCfg().isUseCamping()) {
 			return false;

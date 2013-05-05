@@ -33,7 +33,7 @@ public class MoneyReward extends JavaPlugin {
 	private Permission permission = null;
 	private Essentials essentials = null;
 	public Map<Player, RewardPlayer> players = new HashMap<Player, RewardPlayer>();
-	public List<Integer> blacklist = new ArrayList<Integer>();
+	public List<Entity> blacklist = new ArrayList<Entity>();
 
 	@Override
 	public void onDisable() {
@@ -124,12 +124,13 @@ public class MoneyReward extends JavaPlugin {
 
 			@Override
 			public void run() {
-				MoneyReward.this.updateOnlineTime();
+				checkOnlineTime();
+				checkBlackList();
 			}
 		}, sec * 20, 60 * 20); // every minute
 	}
 
-	public void updateOnlineTime() {
+	private void checkOnlineTime() {
 		for (Player player : players.keySet()) {
 			if (!player.hasPermission(PermissionNode.ONLINE.get())) {
 				return;
@@ -154,6 +155,15 @@ public class MoneyReward extends JavaPlugin {
 		}
 	}
 
+	private void checkBlackList() {
+		for (Entity e : blacklist) {
+			if (e.getTicksLived() > this.getCfg().getRemoveBlacklistedAfterMins()) {
+				e.remove();
+			} else if (e.getNearbyEntities(1, 1, 1).size() > this.getCfg().getRemoveBlacklistedStacked()) {
+				e.remove();
+			}
+		}
+	}
 	public boolean reward(String player, double amount) {
 		if (amount > 0) {
 			this.getEconomy().depositPlayer(player, amount);

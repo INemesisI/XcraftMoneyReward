@@ -16,21 +16,32 @@ public class ConfigManager {
 
 	private final MoneyReward plugin;
 	private FileConfiguration config;
+	// Daily-Reward
 	private boolean dailyRewardActive = true;
-	private boolean onlineRewardActive = true;
-	private boolean mobRewardActive = true;
 	private boolean dailyRewardNotify = true;
+	// Online-Reward
+	private boolean onlineRewardActive = true;
 	private boolean onlineRewardNotify = false;
-	private boolean mobRewardNotify = true;
 	private int onlineRewardIntervall = 0;
-	private boolean useEssentials = false;
+	private boolean useEssentialsafk = false;
+	// Mob-Reward
+	private boolean mobRewardActive = true;
+	private boolean mobRewardNotify = true;
+	// Camping
 	private boolean useCamping = false;
 	private int campingRadius = 0;
 	private int campingCap = 0;
 	private double campingReducement = 1;
+	private int penaltyAfter = 100;
+	private int penaltyStep = 10;
+	private int penaltyAmount = -10;
+	// Blacklist
 	private boolean useBacklist = false;
 	private List<String> blacklist = new ArrayList<String>();
 	private boolean removeBlacklistedOnChunkunload = false;
+	private int removeBlacklistedAfterMins = 5;
+	private int removeBlacklistedStacked = 200;
+	// Multiplier
 	private boolean useMultiplier = false;
 
 	public ConfigManager(MoneyReward instance) {
@@ -50,17 +61,22 @@ public class ConfigManager {
 		onlineRewardActive = config.getBoolean("Online.Options.Active");
 		onlineRewardNotify = config.getBoolean("Online.Options.Notify");
 		onlineRewardIntervall = config.getInt("Online.Options.Intervall");
-		useEssentials = config.getBoolean("Online.Options.UseEssentialsAFK");
+		useEssentialsafk = config.getBoolean("Online.Options.UseEssentialsAFK");
 		mobRewardActive = config.getBoolean("Mob.Options.Active");
 		mobRewardNotify = config.getBoolean("Mob.Options.Notify");
 		useCamping = config.getBoolean("Mob.Options.Camping.Use");
 		campingRadius = config.getInt("Mob.Options.Camping.Radius");
 		campingCap = config.getInt("Mob.Options.Camping.Cap");
 		campingReducement = config.getDouble("Mob.Options.Camping.Reducement");
+		penaltyAfter = config.getInt("Mob.Options.Camping.Penalty.After");
+		penaltyStep = config.getInt("Mob.Options.Camping.Penalty.Step");
+		penaltyAmount = config.getInt("Mob.Options.Camping.Penalty.Amount");
 		useMultiplier = config.getBoolean("Mob.Multiplier.Use");
 		useBacklist = config.getBoolean("Mob.Options.BlackList.Use");
 		blacklist = (List<String>) config.getList("Mob.Options.BlackList.Deny");
 		removeBlacklistedOnChunkunload = config.getBoolean("Mob.Options.BlackList.KillOnChunkUnload");
+		removeBlacklistedAfterMins = config.getInt("Mob.Options.BlackList.KillAfterMinutes");
+		removeBlacklistedStacked = config.getInt("Mob.Options.BlackList.KillStacked");
 	}
 
 	public void save() {
@@ -193,7 +209,7 @@ public class ConfigManager {
 	}
 
 	public boolean isUseEssentials() {
-		return useEssentials;
+		return useEssentialsafk;
 	}
 
 	public boolean isUseCamping() {
@@ -226,5 +242,45 @@ public class ConfigManager {
 
 	public boolean isremoveBlacklistedOnChunkunload() {
 		return removeBlacklistedOnChunkunload;
+	}
+
+	public int getRemoveBlacklistedAfterMins() {
+		return removeBlacklistedAfterMins;
+	}
+
+	public void setRemoveBlacklistedAfterMins(int removeBlacklistedAfterMins) {
+		this.removeBlacklistedAfterMins = removeBlacklistedAfterMins;
+	}
+
+	public int getRemoveBlacklistedStacked() {
+		return removeBlacklistedStacked;
+	}
+
+	public void setRemoveBlacklistedStacked(int removeBlacklistedStacked) {
+		this.removeBlacklistedStacked = removeBlacklistedStacked;
+	}
+
+	public int getPenaltyAfter() {
+		return penaltyAfter;
+	}
+
+	public void setPenaltyAfter(int penaltyAfter) {
+		this.penaltyAfter = penaltyAfter;
+	}
+
+	public int getPenaltyStep() {
+		return penaltyStep;
+	}
+
+	public void setPenaltyStep(int penaltyStep) {
+		this.penaltyStep = penaltyStep;
+	}
+
+	public int getPenaltyAmount() {
+		return penaltyAmount;
+	}
+
+	public void setPenaltyAmount(int penaltyAmount) {
+		this.penaltyAmount = penaltyAmount;
 	}
 }

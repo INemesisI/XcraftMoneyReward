@@ -12,6 +12,7 @@ public enum Msg {
 	REWARD_ONLINE("&aYou just recieved &6$Reward$&a for playing"), //
 	REWARD_MOB("&aYou just recieved &6$Reward$&a for killing a &3$Mob$"), //
 	PENALTY_MOB("&cYou lost &6$Reward$&c for killing a &3$Mob$!"), //
+	PENALTY_CAMP("&cYou lost &6$Reward$&c because of camping too much!"), //
 	ERR_CAMPING("&cYou dont recieve any rewards anymore, because you are camping!");
 
 	private String msg;

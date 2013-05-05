@@ -9,7 +9,7 @@ Online:
   Options:
     Active: true
     Notify: false
-    UseEssentialsAFK: true
+    UseEssentialsAFK: false
     Intervall: 15
   Reward:
     default: 5
@@ -19,16 +19,22 @@ Mob:
     Active: true
     Notify: true
     Camping:
-       Use: true
-       Cap: 5
-       Radius: 16
-       Reducement: 0.75
+      Use: true
+      Cap: 5
+      Radius: 16
+      Reducement: 0.75
+      Penalty:
+        After: 100
+        Step: 10
+        Amount: -10
     BlackList: 
-       Use: true
-       Deny: 
-         - SPAWNER
-         - CUSTOM
-       KillOnChunkUnload: false
+      Use: true
+      Deny: 
+      - SPAWNER
+      - CUSTOM
+      KillOnChunkUnload: false
+      KillAfterMinutes: 5
+      KillStacked: 200
   Multiplier:
     use: false
     World:
