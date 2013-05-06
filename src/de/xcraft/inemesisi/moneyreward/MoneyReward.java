@@ -37,7 +37,8 @@ public class MoneyReward extends JavaPlugin {
 		if (cfg.isremoveBlacklistedOnChunkunload()) {
 			for (World world : this.getServer().getWorlds()) {
 				for (Entity e : world.getEntities()) {
-					if (getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
+					if (e.hasMetadata("Spawnreason")
+							&& getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
 						e.remove();
 					}
 				}
@@ -152,9 +153,10 @@ public class MoneyReward extends JavaPlugin {
 		if (cfg.isremoveBlacklistedOnChunkunload()) {
 			for (World world : this.getServer().getWorlds()) {
 				for (Entity e : world.getEntities()) {
-					if (getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
+					if (e.hasMetadata("Spawnreason")
+							&& getCfg().getBlacklist().contains(e.getMetadata("SpawnReason").get(0).asString())) {
 						if (e.getTicksLived() > this.getCfg().getRemoveBlacklistedAfterMins()
-								|| e.getNearbyEntities(1, 1, 1).size() > this.getCfg().getRemoveBlacklistedStacked()) {
+								|| e.getNearbyEntities(5, 5, 5).size() > this.getCfg().getRemoveBlacklistedStacked()) {
 							e.remove();
 							eventlistener.despawned++;
 						}
