@@ -1,6 +1,5 @@
 package de.xcraft.inemesisi.moneyreward;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +11,10 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 
-public class ConfigManager {
+import de.xcraft.INemesisI.Library.Manager.XcraftConfigManager;
 
-	private final MoneyReward plugin;
-	private FileConfiguration config;
+public class ConfigManager extends XcraftConfigManager {
+
 	// Daily-Reward
 	private boolean dailyRewardActive = true;
 	private boolean dailyRewardNotify = true;
@@ -32,8 +31,8 @@ public class ConfigManager {
 	private int campingRadius = 0;
 	private int campingCap = 0;
 	private double campingReducement = 1;
+	private int campingResetTime = 30;
 	private int penaltyAfter = 100;
-	private int penaltyStep = 10;
 	private int penaltyAmount = -10;
 	// Blacklist
 	private boolean useBacklist = false;
@@ -44,18 +43,12 @@ public class ConfigManager {
 	// Multiplier
 	private boolean useMultiplier = false;
 
-	public ConfigManager(MoneyReward instance) {
-		plugin = instance;
+	public ConfigManager(XcraftMoneyReward plugin) {
+		super(plugin);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void load() {
-		final File check = new File(plugin.getDataFolder(), "config.yml");
-		if (!check.exists()) {
-			plugin.saveDefaultConfig();
-		}
-		plugin.reloadConfig();
-		config = plugin.getConfig();
 		dailyRewardActive = config.getBoolean("Daily.Options.Active");
 		dailyRewardNotify = config.getBoolean("Daily.Options.Notify");
 		onlineRewardActive = config.getBoolean("Online.Options.Active");
@@ -68,8 +61,8 @@ public class ConfigManager {
 		campingRadius = config.getInt("Mob.Options.Camping.Radius");
 		campingCap = config.getInt("Mob.Options.Camping.Cap");
 		campingReducement = config.getDouble("Mob.Options.Camping.Reducement");
+		campingResetTime = config.getInt("Mob.Options.Camping.ResetTime");
 		penaltyAfter = config.getInt("Mob.Options.Camping.Penalty.After");
-		penaltyStep = config.getInt("Mob.Options.Camping.Penalty.Step");
 		penaltyAmount = config.getInt("Mob.Options.Camping.Penalty.Amount");
 		useMultiplier = config.getBoolean("Mob.Multiplier.Use");
 		useBacklist = config.getBoolean("Mob.Options.BlackList.Use");
@@ -84,7 +77,8 @@ public class ConfigManager {
 
 	public double getDailyReward(Player player) {
 		for (String group : config.getConfigurationSection("Daily.Reward").getKeys(false)) {
-			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
+					(String) null, player.getName())) {
 				if (group.equals(pgroup)) {
 					return config.getDouble("Daily.Reward." + group);
 				}
@@ -98,7 +92,8 @@ public class ConfigManager {
 
 	public double getOnlineReward(Player player) {
 		for (String group : config.getConfigurationSection("Online.Reward").getKeys(false)) {
-			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
+					(String) null, player.getName())) {
 				if (group.equals(pgroup)) {
 					return config.getDouble("Online.Reward." + group);
 				}
@@ -145,7 +140,8 @@ public class ConfigManager {
 			worldmp = config.getDouble("Mob.Multiplier.World." + player.getWorld().getName());
 		}
 		breakpoint : for (String group : config.getConfigurationSection("Mob.Multiplier.Group").getKeys(false)) {
-			for (String pgroup : plugin.getPermission().getPlayerGroups((String) null, player.getName())) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
+					(String) null, player.getName())) {
 				if (group.equals(pgroup)) {
 					groupmp = config.getDouble("Mob.Multiplier.Group." + group);
 					break breakpoint;
@@ -268,19 +264,19 @@ public class ConfigManager {
 		this.penaltyAfter = penaltyAfter;
 	}
 
-	public int getPenaltyStep() {
-		return penaltyStep;
-	}
-
-	public void setPenaltyStep(int penaltyStep) {
-		this.penaltyStep = penaltyStep;
-	}
-
 	public int getPenaltyAmount() {
 		return penaltyAmount;
 	}
 
 	public void setPenaltyAmount(int penaltyAmount) {
 		this.penaltyAmount = penaltyAmount;
+	}
+
+	public int getCampingResetTime() {
+		return campingResetTime;
+	}
+
+	public void setCampingResetTime(int campingResetTime) {
+		this.campingResetTime = campingResetTime;
 	}
 }

@@ -23,10 +23,10 @@ Mob:
       Cap: 5
       Radius: 16
       Reducement: 0.75
+      ResetTime: 600
       Penalty:
         After: 100
-        Step: 10
-        Amount: -10
+        Amount: -0.01
     BlackList: 
       Use: true
       Deny: 

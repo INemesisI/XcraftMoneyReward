@@ -7,48 +7,53 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 
+import de.xcraft.INemesisI.Library.XcraftPlugin;
+import de.xcraft.INemesisI.Library.Message.Messenger;
+
 public enum Msg {
-	REWARD_DAILY("&aYou recieved &6$Reward$&a for logging in today!"), //
-	REWARD_ONLINE("&aYou just recieved &6$Reward$&a for playing"), //
-	REWARD_MOB("&aYou just recieved &6$Reward$&a for killing a &3$Mob$"), //
-	PENALTY_MOB("&cYou lost &6$Reward$&c for killing a &3$Mob$!"), //
-	PENALTY_CAMP("&cYou lost &6$Reward$&c because of camping too much!"), //
+	REWARD_DAILY("&aYou recieved &6$REWARD$&a for logging in today!"), //
+	REWARD_ONLINE("&aYou just recieved &6$REWARD$&a for playing"), //
+	REWARD_MOB("&aYou just recieved &6$REWARD$&a for killing a &3$MOB$"), //
+	PENALTY_MOB("&cYou lost &6$REWARD$&c for killing a &3$MOB$!"), //
+	PENALTY_CAMP("&cYou will lose now a small amount of money for killing Mobs!"), //
+	PENALTY_INFO("&cYou lost &6$REWARD$&c in total for killing too many mobs!"), //
 	ERR_CAMPING("&cYou dont recieve any rewards anymore, because you are camping!");
 
-	private String msg;
+	public enum Replace {
+		$PLAYER$("$Player$"), $REWARD$("$Reward$"), $MOB$("$Mob$");
 
-	public enum Key {
-		$Player$("$Player$"), $Reward$("$Reward$"), $Mob$("$Mob$");
+		private String key;
 
-		private String replace;
-
-		Key(String replace) {
-			this.setReplace(replace);
+		Replace(String key) {
+			this.set(key);
 		}
 
-		public String getReplace() {
-			return replace;
+		private void set(String output) {
+			key = output;
 		}
 
-		public void setReplace(String replace) {
-			this.replace = replace;
+		private String get() {
+			return key;
 		}
 
-		public static Key $Player$(String replace) {
-			$Player$.setReplace(replace);
-			return $Player$;
+		public static Replace PLAYER(String replace) {
+			$PLAYER$.set(replace);
+			return $PLAYER$;
 		}
 
-		public static Key $Reward$(String replace) {
-			$Reward$.setReplace(replace);
-			return $Reward$;
+		public static Replace REWARD(String replace) {
+			$REWARD$.set(replace);
+			return $REWARD$;
 		}
 
-		public static Key $Mob$(String replace) {
-			$Mob$.setReplace(replace);
-			return $Mob$;
+		public static Replace MOB(String replace) {
+			$MOB$.set(replace);
+			return $MOB$;
 		}
 	}
+
+
+	private String msg;
 
 	Msg(String msg) {
 		this.set(msg);
@@ -64,19 +69,33 @@ public enum Msg {
 
 	@Override
 	public String toString() {
-		String message = msg.replaceAll("&([a-f0-9])", "\u00A7$1");
+		String message = msg.replaceAll("&([0-9a-z])", "\u00a7$1");
+		message = message.replace("\\n", "\n");
 		return message;
 	}
 
-	public String toString(Key key1, Key key2, Key key3) {
-		String message = msg.replaceAll("&([a-f0-9])", "\u00A7$1");
-		message = message.replace(key1.name(), key1.getReplace());
-		message = message.replace(key2.name(), key2.getReplace());
-		message = message.replace(key3.name(), key3.getReplace());
+	public String toString(Replace r1) {
+		String message = toString();
+		message = message.replace(r1.name(), r1.get());
 		return message;
 	}
 
-	public static void init(MoneyReward plugin) {
+	public String toString(Replace r1, Replace r2) {
+		String message = toString();
+		message = message.replace(r1.name(), r1.get());
+		message = message.replace(r2.name(), r2.get());
+		return message;
+	}
+
+	public String toString(Replace[] repl) {
+		String message = toString();
+		for (Replace r : repl) {
+			message = message.replace(r.name(), r.get());
+		}
+		return message;
+	}
+
+	public static void init(XcraftPlugin plugin) {
 		File msgFile = new File(plugin.getDataFolder(), "locale.yml");
 		if (!load(msgFile)) {
 			return;
@@ -92,7 +111,11 @@ public enum Msg {
 			file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for (Msg m : Msg.values()) {
-				bw.write(m.name() + ": " + m.get());
+				String msg = m.get();
+				if (msg.contains("\n")) {
+					msg = msg.replace("\n", "\\n");
+				}
+				bw.write(m.name() + ": " + msg);
 				bw.newLine();
 			}
 			bw.close();
@@ -130,7 +153,7 @@ public enum Msg {
 	 * Helper-method for parsing the strings from the announcements-file.
 	 */
 	private static void process(String s) {
-		String[] split = s.split(": ");
+		String[] split = s.split(": ", 2);
 		try {
 			Msg msg = Msg.valueOf(split[0]);
 			msg.set(split[1]);
@@ -139,4 +162,5 @@ public enum Msg {
 			return;
 		}
 	}
+
 }

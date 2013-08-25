@@ -1,11 +1,16 @@
 name: XcraftMoneyReward
-main: de.xcraft.inemesisi.moneyreward.MoneyReward
-version: 1.0
+version: 1.1
 author: INemesisI
-depend: [Vault]
+
+main: de.xcraft.inemesisi.moneyreward.XcraftMoneyReward
+load: POSTWORLD
+
+depend: [XcraftLibrary, Vault]
+softdepend: [Essentials]
 
 commands:
-  mr:
+  moneyreward:
+    aliases: mr
     
 
 permissions:
