@@ -52,7 +52,6 @@ public enum Msg {
 		}
 	}
 
-
 	private String msg;
 
 	Msg(String msg) {
@@ -97,16 +96,14 @@ public enum Msg {
 
 	public static void init(XcraftPlugin plugin) {
 		File msgFile = new File(plugin.getDataFolder(), "locale.yml");
-		if (!load(msgFile)) {
+		if (!load(msgFile))
 			return;
-		}
 		parseFile(msgFile);
 	}
 
 	private static boolean load(File file) {
-		if (file.exists()) {
+		if (file.exists())
 			return true;
-		}
 		try {
 			file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));

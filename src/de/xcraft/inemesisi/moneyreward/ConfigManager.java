@@ -47,6 +47,7 @@ public class ConfigManager extends XcraftConfigManager {
 		super(plugin);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void load() {
 		dailyRewardActive = config.getBoolean("Daily.Options.Active");
@@ -72,35 +73,30 @@ public class ConfigManager extends XcraftConfigManager {
 		removeBlacklistedStacked = config.getInt("Mob.Options.BlackList.KillStacked");
 	}
 
+	@Override
 	public void save() {
 	}
 
 	public double getDailyReward(Player player) {
 		for (String group : config.getConfigurationSection("Daily.Reward").getKeys(false)) {
-			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
-					(String) null, player.getName())) {
-				if (group.equals(pgroup)) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups((String) null, player.getName())) {
+				if (group.equals(pgroup))
 					return config.getDouble("Daily.Reward." + group);
-				}
 			}
-			if (group.equals("default")) {
+			if (group.equals("default"))
 				return config.getDouble("Daily.Reward.default");
-			}
 		}
 		return 0;
 	}
 
 	public double getOnlineReward(Player player) {
 		for (String group : config.getConfigurationSection("Online.Reward").getKeys(false)) {
-			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
-					(String) null, player.getName())) {
-				if (group.equals(pgroup)) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups((String) null, player.getName())) {
+				if (group.equals(pgroup))
 					return config.getDouble("Online.Reward." + group);
-				}
 			}
-			if (group.equals("default")) {
+			if (group.equals("default"))
 				return config.getDouble("Online.Reward.default");
-			}
 		}
 		return 0;
 	}
@@ -139,9 +135,8 @@ public class ConfigManager extends XcraftConfigManager {
 		if (config.contains("Mob.Multiplier.World." + player.getWorld().getName())) {
 			worldmp = config.getDouble("Mob.Multiplier.World." + player.getWorld().getName());
 		}
-		breakpoint : for (String group : config.getConfigurationSection("Mob.Multiplier.Group").getKeys(false)) {
-			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups(
-					(String) null, player.getName())) {
+		breakpoint: for (String group : config.getConfigurationSection("Mob.Multiplier.Group").getKeys(false)) {
+			for (String pgroup : ((XcraftMoneyReward) plugin).getPermission().getPlayerGroups((String) null, player.getName())) {
 				if (group.equals(pgroup)) {
 					groupmp = config.getDouble("Mob.Multiplier.Group." + group);
 					break breakpoint;
