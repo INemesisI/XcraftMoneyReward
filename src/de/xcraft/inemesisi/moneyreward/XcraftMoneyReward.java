@@ -8,12 +8,24 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.earth2me.essentials.Essentials;
 
 import de.xcraft.INemesisI.Library.XcraftPlugin;
 import de.xcraft.INemesisI.Library.Message.Messenger;
+
+//@formatter:off
+/***
+ * @author INemesisI
+ *     by _____   __                         _      ____
+ *       /  _/ | / /__  ____ ___  ___  _____(_)____/  _/
+ *       / //  |/ / _ \/ __ `__ \/ _ \/ ___/ / ___// /
+ *     _/ // /|  /  __/ / / / / /  __(__  ) (__  )/ /
+ *    /___/_/ |_/\___/_/ /_/ /_/\___/____/_/____/___/
+ */
+//@formatter:on
 
 public class XcraftMoneyReward extends XcraftPlugin {
 
@@ -28,15 +40,19 @@ public class XcraftMoneyReward extends XcraftPlugin {
 
 	@Override
 	protected void setup() {
+		Msg.init(this);
 		this.messenger = Messenger.getInstance(this);
 		this.configManager = new ConfigManager(this);
+		this.setupEconomy();
+		this.setupPermissions();
+		this.setupEssentials();
 		this.pluginManager = new RewardManager(this);
 		this.eventListener = new EventListener(this);
 		this.commandManager = new CommandManager(this);
 		configManager.load();
-		this.setupEconomy();
-		this.setupPermissions();
-		this.setupEssentials();
+		for (Player player : getServer().getOnlinePlayers()) {
+			getPluginManager().players.put(player, new RewardPlayer(player));
+		}
 		startScheduler();
 	}
 

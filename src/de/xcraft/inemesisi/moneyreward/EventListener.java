@@ -3,6 +3,7 @@ package de.xcraft.inemesisi.moneyreward;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -58,13 +59,13 @@ public class EventListener extends XcraftEventListener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (cManager.isUseBlacklist() && event.getEntity().hasMetadata("SpawnReason")
+		if (cManager.isUseBlacklist() && event.getEntity().hasMetadata("SpawnReason") && event.getEntity().getMetadata("SpawnReason").size() > 0
 				&& cManager.getBlacklist().contains(event.getEntity().getMetadata("SpawnReason").get(0).asString()))
 			return;
 		if (!(event.getEntity().getKiller() instanceof Player))
 			return;
 		Player player = event.getEntity().getKiller();
-		if (!player.hasPermission("XcraftMoneyReward.Mob"))
+		if (!player.hasPermission("XcraftMoneyReward.Mob") || player.getGameMode().equals(GameMode.CREATIVE))
 			return;
 		if ((event.getEntity().getType() == EntityType.SLIME) && (((Slime) event.getEntity()).getSize() != 4))
 			return;
@@ -130,7 +131,8 @@ public class EventListener extends XcraftEventListener {
 					plugin.getMessenger().sendInfo(player, Msg.ERR_CAMPING.toString(), true);
 				}
 				// check for penalty
-				if (e.hasMetadata("SpawnReason") && e.getMetadata("SpawnReason").get(0).asString().equals("SPAWNER")
+				if (e.hasMetadata("SpawnReason") && e.getMetadata("SpawnReason").size() > 0
+						&& e.getMetadata("SpawnReason").get(0).asString().equals("SPAWNER")
 						&& rp.campkills >= cManager.getPenaltyAfter()) {
 					int penalty = cManager.getPenaltyAmount() * (rp.campkills - cManager.getPenaltyAfter());
 					if (rManager.reward(player.getName(), penalty)) {
