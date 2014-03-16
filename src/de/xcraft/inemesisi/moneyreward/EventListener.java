@@ -44,10 +44,10 @@ public class EventListener extends XcraftEventListener {
 			double reward = cManager.getDailyReward(event.getPlayer());
 			if (rManager.reward(event.getPlayer().getName(), reward) && cManager.isDailyRewardNotify()) {
 				plugin.getMessenger()
-						.sendInfo(
-								event.getPlayer(),
-								Msg.REWARD_DAILY.toString(Replace.PLAYER(event.getPlayer().getName()),
-										Replace.REWARD(rManager.economy.format(reward))), true);
+				.sendInfo(
+						event.getPlayer(),
+						Msg.REWARD_DAILY.toString(Replace.PLAYER(event.getPlayer().getName()),
+								Replace.REWARD(rManager.economy.format(reward))), true);
 			}
 		}
 	}

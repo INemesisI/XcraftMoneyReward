@@ -14,11 +14,11 @@ public class CommandManager extends XcraftCommandManager {
 	protected void registerCommands() {
 		registerBukkitCommand("moneyreward");
 	}
-	
+
 	@Override
-	public void onReload(CommandSender sender) {
+	public void onLoad(CommandSender sender) {
 		Msg.init(plugin);
-		super.onReload(sender);
+		super.onLoad(sender);
 	}
 
 }

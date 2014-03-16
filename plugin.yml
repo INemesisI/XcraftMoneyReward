@@ -1,6 +1,7 @@
 name: XcraftMoneyReward
-version: 1.2.2
+version: 1.2.4
 author: INemesisI
+description: Requires XcraftLibrary v1.6.0
 
 main: de.xcraft.inemesisi.moneyreward.XcraftMoneyReward
 load: POSTWORLD
